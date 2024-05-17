@@ -82,12 +82,18 @@ def main():
     else:
         issues = generate_issues(reports)
 
+        # Max length for issue body allowed is: 65536
+        char_length = 65500
+        use_body = (issue.body[:char_length] + '..') if len(issue.body) > char_length else issue.body
+
         for issue in issues:
             print(f"Creating GitHub issue `{issue.title}`")
             print(
                 f'gh --repo "{github_repo}" issue create --title "{issue.title}" --body ... --label "{input_label}" '
                 + " ".join(extra_args)
             )
+
+
             proc = subprocess.Popen(
                 [
                     "gh",
@@ -98,7 +104,7 @@ def main():
                     "--title",
                     issue.title,
                     "--body",
-                    issue.body,
+                    use_body,
                     "--label",
                     input_label,
                 ]

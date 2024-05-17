@@ -183,4 +183,8 @@ def generate_issues(reports: Iterator[Report]) -> Iterator[Issue]:
 {reference_items}
 
 """
-        yield Issue(report.id, report=report, title=issue_title, body=issue_body)
+        # Max length for issue body allowed is: 65536
+        char_length = 65500
+        use_body = (issue_body[:char_length] + '..\n') if len(issue_body) > char_length else issue_body
+
+        yield Issue(report.id, report=report, title=issue_title, body=use_body)
